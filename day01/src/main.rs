@@ -29,5 +29,32 @@ fn main() {
         res += dif as u64;
     }
 
-    println!("{res}");
+    println!("Part 1: {res}");
+
+    res = 0;
+
+    let mut i: usize = 0;
+    let mut j: usize = 0;
+
+    while i < vec1.len() {
+        let val = vec1[i];
+
+        while j < vec2.len() && vec2[j] < vec1[i] {
+            j += 1;
+        }
+
+        if j >= vec2.len() {
+            break;
+        }
+
+        let mut jp = j;
+        while vec1[i] == vec2[jp] {
+            res += val as u64;
+            jp += 1;
+        }
+
+        i += 1;
+    }
+
+    println!("Part 2: {res}");
 }
