@@ -8,7 +8,7 @@ fn main() {
     let mut res = 0;
 
     for line in lines {
-        let parts: Vec<&str> = line.split_whitespace().collect();
+        let parts: [&str] = line.split_whitespace().collect();
         if parts.len() == 0 {
             continue;
         }
