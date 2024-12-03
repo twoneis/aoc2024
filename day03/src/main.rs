@@ -5,10 +5,26 @@ fn main() {
     let lines: Vec<String> = contents.split("\n").map(|s| s.to_string()).collect();
 
     let mut res = 0;
+    let mut res2 = 0;
+
+    let mut do_var = true;
 
     for line in lines {
         for i in 8..line.len() {
             let pattern = "mul(";
+            let pattern_do = "do()";
+            let pattern_dont = "don't()";
+
+            if line[i - 8..i - 4] == *pattern_do {
+                do_var = true;
+                continue;
+            }
+
+            if line[i - 8..i - 1] == *pattern_dont {
+                do_var = false;
+                continue;
+            }
+
             if line[i - 8..i - 4] != *pattern {
                 continue;
             }
@@ -64,8 +80,12 @@ fn main() {
                 .expect("Parsing error");
 
             res += a * b;
+            if do_var {
+                res2 += a * b;
+            }
         }
     }
 
     println!("Part 1: {res}");
+    println!("Part 2: {res2}");
 }
