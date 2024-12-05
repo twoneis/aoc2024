@@ -2,55 +2,59 @@ use std::collections::VecDeque;
 use std::fs;
 
 fn main() {
-    let lines: Vec<String> = fs::read_to_string("testinput")
+    let lines: Vec<String> = fs::read_to_string("input")
         .expect("Error reading file")
         .lines()
         .map(String::from)
         .collect::<Vec<String>>();
 
-    let original: Vec<VecDeque<char>> = lines
+    let mut res = 0;
+
+    let m: Vec<VecDeque<char>> = lines
         .iter()
         .map(|line| line.chars().collect::<VecDeque<char>>())
         .filter(|line| line.len() != 0)
         .collect();
+    res += count_occurences(&m);
 
-    let transpose: Vec<VecDeque<char>> = transpose(&original);
+    let mlt = transpose(&shift_left(&m));
+    res += count_occurences(&mlt);
 
-    let flip_vert: Vec<VecDeque<char>> = flip_vert(&original);
-    let flip_horz: Vec<VecDeque<char>> = flip_horz(&original);
+    let mt = transpose(&m);
+    res += count_occurences(&mt);
 
-    let shift_right: Vec<VecDeque<char>> = shift_right(&original);
-    let shift_left: Vec<VecDeque<char>> = shift_left(&original);
+    let mrt = transpose(&shift_right(&m));
+    res += count_occurences(&mrt);
 
+    let mv = flip_vert(&m);
+    res += count_occurences(&mv);
+
+    let mlht = transpose(&flip_horz(&shift_left(&m)));
+    res += count_occurences(&mlht);
+
+    let mht = transpose(&flip_horz(&m));
+    res += count_occurences(&mht);
+
+    let mrht = transpose(&flip_horz(&shift_left(&m)));
+    res += count_occurences(&mrht);
+
+    println!("Part 1: {res}");
+}
+
+fn count_occurences(mat: &Vec<VecDeque<char>>) -> u32 {
+    // println!("Counting occurences: ");
     let mut res = 0;
-
-    println!("Original:");
-    for line in &original {
-        println!("{:?}", line);
+    for row in mat {
+        // println!("{:?}", row);
+        for i in 3..row.len() {
+            if (row[i - 3] == 'X') && (row[i - 2] == 'M') && (row[i - 1] == 'A') && (row[i] == 'S')
+            {
+                res += 1;
+            }
+        }
     }
-
-    println!("Transpose:");
-    for line in &transpose {
-        println!("{:?}", line);
-    }
-
-    println!("Flip Vertical:");
-    for line in &flip_vert {
-        println!("{:?}", line);
-    }
-    println!("Flip Horizontal:");
-    for line in &flip_horz {
-        println!("{:?}", line);
-    }
-
-    println!("Shift right:");
-    for line in &shift_right {
-        println!("{:?}", line);
-    }
-    println!("Shift left:");
-    for line in &shift_left {
-        println!("{:?}", line);
-    }
+    // println!("{res}");
+    res
 }
 
 fn transpose(mat: &Vec<VecDeque<char>>) -> Vec<VecDeque<char>> {
@@ -94,8 +98,10 @@ fn shift_right(mat: &Vec<VecDeque<char>>) -> Vec<VecDeque<char>> {
 
     for i in 0..res.len() {
         for _ in 0..i {
-            res[i].pop_back();
             res[i].push_front('.');
+        }
+        for _ in i..res.len() {
+            res[i].push_back('.');
         }
     }
 
@@ -107,8 +113,10 @@ fn shift_left(mat: &Vec<VecDeque<char>>) -> Vec<VecDeque<char>> {
 
     for i in 0..res.len() {
         for _ in 0..i {
-            res[i].pop_front();
             res[i].push_back('.');
+        }
+        for _ in i..res.len() {
+            res[i].push_front('.');
         }
     }
 
