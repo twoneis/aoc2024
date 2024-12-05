@@ -35,17 +35,15 @@ fn main() {
     let mht = transpose(&flip_horz(&m));
     res += count_occurences(&mht);
 
-    let mrht = transpose(&flip_horz(&shift_left(&m)));
+    let mrht = transpose(&flip_horz(&shift_right(&m)));
     res += count_occurences(&mrht);
 
     println!("Part 1: {res}");
 }
 
 fn count_occurences(mat: &Vec<VecDeque<char>>) -> u32 {
-    // println!("Counting occurences: ");
     let mut res = 0;
     for row in mat {
-        // println!("{:?}", row);
         for i in 3..row.len() {
             if (row[i - 3] == 'X') && (row[i - 2] == 'M') && (row[i - 1] == 'A') && (row[i] == 'S')
             {
@@ -53,7 +51,6 @@ fn count_occurences(mat: &Vec<VecDeque<char>>) -> u32 {
             }
         }
     }
-    // println!("{res}");
     res
 }
 
