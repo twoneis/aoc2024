@@ -1,5 +1,4 @@
 use multimap::MultiMap;
-use std::collections::HashMap;
 use std::fs;
 
 fn main() {
@@ -108,12 +107,7 @@ fn main() {
         })
         .map(|line| line[line.len() / 2])
         .sum();
-    // .filter(|line| line.len() != 0)
-    // .collect();
 
     println!("Part 1: {res1}");
     println!("Part 2: {res2}");
-    // for line in res2 {
-    //     println!("{:?}", line);
-    // }
 }
