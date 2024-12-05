@@ -38,7 +38,41 @@ fn main() {
     let mrht = transpose(&flip_horz(&shift_right(&m)));
     res += count_occurences(&mrht);
 
+    let res2 = count_occurences_2(&m);
+
     println!("Part 1: {res}");
+    println!("Part 2: {res2}");
+}
+
+fn count_occurences_2(mat: &Vec<VecDeque<char>>) -> u32 {
+    let mut res = 0;
+    for i in 1..mat.len() - 1 {
+        for j in 1..mat[i].len() - 1 {
+            if mat[i][j] != 'A' {
+                continue;
+            }
+            if (mat[i - 1][j - 1] == 'M'
+                && mat[i - 1][j + 1] == 'M'
+                && mat[i + 1][j + 1] == 'S'
+                && mat[i + 1][j - 1] == 'S')
+                || (mat[i - 1][j - 1] == 'S'
+                    && mat[i - 1][j + 1] == 'M'
+                    && mat[i + 1][j + 1] == 'M'
+                    && mat[i + 1][j - 1] == 'S')
+                || (mat[i - 1][j - 1] == 'S'
+                    && mat[i - 1][j + 1] == 'S'
+                    && mat[i + 1][j + 1] == 'M'
+                    && mat[i + 1][j - 1] == 'M')
+                || (mat[i - 1][j - 1] == 'M'
+                    && mat[i - 1][j + 1] == 'S'
+                    && mat[i + 1][j + 1] == 'S'
+                    && mat[i + 1][j - 1] == 'M')
+            {
+                res += 1;
+            }
+        }
+    }
+    res
 }
 
 fn count_occurences(mat: &Vec<VecDeque<char>>) -> u32 {
