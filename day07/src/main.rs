@@ -1,5 +1,10 @@
 fn main() {
     let args: Vec<String> = std::env::args().collect();
+
+    if args.len() != 2 {
+        println!("Usage: cargo run <input_file>");
+    }
+
     let lines: Vec<Vec<u64>> = std::fs::read_to_string(&args[1])
         .expect("Error reading file")
         .lines()
