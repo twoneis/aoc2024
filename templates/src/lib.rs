@@ -4,6 +4,7 @@ mod utils {
 
         if args.len() != 2 {
             println!("Usage: cargo run <input_file>");
+            return;
         }
 
         let lines: Vec<Vec<char>> = std::fs::read_to_string(&args[1])
