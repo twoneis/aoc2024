@@ -1,8 +1,7 @@
-use multimap::MultiMap;
 use std::collections::HashSet;
 use std::fs;
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Hash)]
 enum DIRECTIONS {
     NORTH,
     EAST,
@@ -10,8 +9,10 @@ enum DIRECTIONS {
     WEST,
 }
 
+impl Eq for DIRECTIONS {}
+
 fn main() {
-    let lines: Vec<Vec<char>> = fs::read_to_string("testinput")
+    let lines: Vec<Vec<char>> = fs::read_to_string("input")
         .expect("Error reading file")
         .lines()
         .map(String::from)
@@ -21,9 +22,6 @@ fn main() {
     let mut obstacles: HashSet<(isize, isize)> = HashSet::new();
     let mut position: (isize, isize) = (-1, -1);
     let mut direction: DIRECTIONS = DIRECTIONS::NORTH;
-    let mut visited: HashSet<(isize, isize)> = HashSet::new();
-    let mut turns: MultiMap<(isize, isize), DIRECTIONS> = MultiMap::new();
-
     for i in 0..lines.len() {
         if lines[i].len() == 0 {
             continue;
@@ -41,6 +39,10 @@ fn main() {
         }
     }
 
+    let init_position: (isize, isize) = position;
+
+    let mut visited: HashSet<(isize, isize)> = HashSet::new();
+
     while position.0 >= 0
         && position.0 < lines[0].len() as isize
         && position.1 >= 0
@@ -53,7 +55,6 @@ fn main() {
                 if obstacles.contains(&position) {
                     position.1 += 1;
                     direction = DIRECTIONS::EAST;
-                    turns.insert(position, direction);
                 }
             }
             DIRECTIONS::EAST => {
@@ -61,7 +62,6 @@ fn main() {
                 if obstacles.contains(&position) {
                     position.0 -= 1;
                     direction = DIRECTIONS::SOUTH;
-                    turns.insert(position, direction);
                 }
             }
             DIRECTIONS::SOUTH => {
@@ -69,7 +69,6 @@ fn main() {
                 if obstacles.contains(&position) {
                     position.1 -= 1;
                     direction = DIRECTIONS::WEST;
-                    turns.insert(position, direction);
                 }
             }
             DIRECTIONS::WEST => {
@@ -77,7 +76,6 @@ fn main() {
                 if obstacles.contains(&position) {
                     position.0 += 1;
                     direction = DIRECTIONS::NORTH;
-                    turns.insert(position, direction);
                 }
             }
         }
@@ -85,84 +83,51 @@ fn main() {
 
     let mut res = 0;
 
-    for (pos, dirs) in turns.iter_all() {
-        for dir in dirs {
-            let target = match dir {
-                DIRECTIONS::NORTH => (pos.1, DIRECTIONS::SOUTH),
-                DIRECTIONS::EAST => (pos.0, DIRECTIONS::WEST),
-                DIRECTIONS::SOUTH => (pos.1, DIRECTIONS::NORTH),
-                DIRECTIONS::WEST => (pos.0, DIRECTIONS::EAST),
-            };
+    for i in 0..lines.len() {
+        for j in 0..lines[i].len() {
+            let mut obstacles_added = obstacles.clone();
+            obstacles_added.insert((j as isize, i as isize));
+            let mut visited_dir: HashSet<(isize, isize, DIRECTIONS)> = HashSet::new();
 
-            let mut position = *pos;
-            let mut direction = *dir;
-            let mut added = false;
+            let mut position = init_position;
+            let mut direction = DIRECTIONS::NORTH;
 
             while position.0 >= 0
                 && position.0 < lines[0].len() as isize
                 && position.1 >= 0
                 && position.1 < lines.len() as isize
             {
-                if direction == target.1
-                    && (position.0 == target.0 || position.1 == target.0)
-                    && !added
-                {
-                    match direction {
-                        DIRECTIONS::NORTH => {
-                            if !position.1 - 1 < 0 {
-                                direction = DIRECTIONS::EAST;
-                            }
-                        }
-                        DIRECTIONS::EAST => {
-                            if !position.0 + 1 >= lines[0].len() as isize {
-                                direction = DIRECTIONS::SOUTH;
-                            }
-                        }
-                        DIRECTIONS::SOUTH => {
-                            if !position.1 + 1 >= lines.len() as isize {
-                                direction = DIRECTIONS::WEST;
-                            }
-                        }
-                        DIRECTIONS::WEST => {
-                            if !position.0 - 1 < 0 {
-                                direction = DIRECTIONS::NORTH;
-                            }
-                        }
-                    };
-                    println!("Additional turn at {:?}", position);
-                    added = true;
+                if visited_dir.contains(&(position.0, position.1, direction)) {
+                    res += 1;
+                    break;
                 }
 
-                if position == *pos && added {
-                    println!("Valid result");
-                    // res += 1;
-                }
-
+                visited_dir.insert((position.0, position.1, direction));
                 match direction {
                     DIRECTIONS::NORTH => {
                         position.1 -= 1;
-                        if obstacles.contains(&position) {
+                        if obstacles_added.contains(&position) {
                             position.1 += 1;
                             direction = DIRECTIONS::EAST;
                         }
                     }
                     DIRECTIONS::EAST => {
                         position.0 += 1;
-                        if obstacles.contains(&position) {
+                        if obstacles_added.contains(&position) {
                             position.0 -= 1;
                             direction = DIRECTIONS::SOUTH;
                         }
                     }
                     DIRECTIONS::SOUTH => {
                         position.1 += 1;
-                        if obstacles.contains(&position) {
+                        if obstacles_added.contains(&position) {
                             position.1 -= 1;
                             direction = DIRECTIONS::WEST;
                         }
                     }
                     DIRECTIONS::WEST => {
                         position.0 -= 1;
-                        if obstacles.contains(&position) {
+                        if obstacles_added.contains(&position) {
                             position.0 += 1;
                             direction = DIRECTIONS::NORTH;
                         }
