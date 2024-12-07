@@ -1,7 +1,8 @@
 use std::fs;
 
 fn main() {
-    let lines: Vec<String> = fs::read_to_string("testinput")
+    let args: Vec<String> = std::env::args().collect();
+    let lines: Vec<String> = fs::read_to_string()
         .expect("Error reading file")
         .lines()
         .map(String::from)
