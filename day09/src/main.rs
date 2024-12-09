@@ -1,5 +1,3 @@
-use std::collections::VecDeque;
-
 fn main() {
     let args: Vec<String> = std::env::args().collect();
 
@@ -39,6 +37,8 @@ fn main() {
         skip = !skip;
     }
 
+    let mut disk1 = disk.clone();
+
     let mut i = 0;
     let mut j = disk.len() - 1;
 
@@ -61,13 +61,69 @@ fn main() {
         disk.swap(i, j);
     }
 
-    let mut sum: usize = 0;
+    let res: usize = checksum(&disk);
 
+    println!("Part 1: {res}");
+
+    let mut i = disk1.len() - 1;
+
+    while i > 0 {
+        while i > 0 && disk1[i] == -1 {
+            i -= 1;
+        }
+        let mut n: usize = 0;
+
+        let num = disk1[i] as usize;
+
+        while i > 0 && disk1[i] == num as isize {
+            n += 1;
+            i -= 1;
+        }
+
+        for j in 0..i + 1 {
+            if fits(&disk1[j..j + n], n as usize) {
+                for pos in 0..n as usize {
+                    disk1.swap(i + 1 + pos, j + pos)
+                }
+                break;
+            }
+        }
+    }
+
+    let res = checksum(&disk1);
+    println!("Part 2: {res}");
+}
+
+fn fits(part: &[isize], size: usize) -> bool {
+    if part.len() < size {
+        return false;
+    }
+
+    for i in 0..size {
+        if part[i] != -1 {
+            return false;
+        }
+    }
+    true
+}
+
+fn checksum(disk: &[isize]) -> usize {
+    let mut sum = 0;
     for block in 0..disk.len() {
         if disk[block] != -1 {
             sum += block * disk[block] as usize;
         }
     }
+    sum
+}
 
-    println!("Part 1: {}", sum);
+fn print_disk(disk: &[isize]) {
+    for &num in disk {
+        if num == -1 {
+            print!(".");
+        } else {
+            print!("{num}");
+        }
+    }
+    println!()
 }
