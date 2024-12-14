@@ -27,24 +27,46 @@ fn main() {
         }
     }
 
-    let mut antinodes: HashSet<(isize, isize)> = HashSet::new();
+    let mut antinodes1: HashSet<(isize, isize)> = HashSet::new();
+    let mut antinodes2: HashSet<(isize, isize)> = HashSet::new();
 
     for (_, mut locations) in antennas.into_iter() {
         locations.sort();
         for i in 0..locations.len() {
             for j in i + 1..locations.len() {
+                let y_step = locations[i].0 - locations[j].0;
+                let x_step = locations[i].1 - locations[j].1;
+                let mut y = locations[i].0;
+                let mut x = locations[i].1;
+                while y >= 0 && x >= 0 && y < lines[0].len() as isize && x < lines.len() as isize {
+                    antinodes2.insert((x, y));
+                    x += x_step;
+                    y += y_step;
+                }
+
+                let y_step = locations[j].0 - locations[i].0;
+                let x_step = locations[j].1 - locations[i].1;
+                let mut y = locations[j].0;
+                let mut x = locations[j].1;
+                while y >= 0 && x >= 0 && y < lines[0].len() as isize && x < lines.len() as isize {
+                    antinodes2.insert((x, y));
+                    x += x_step;
+                    y += y_step;
+                }
+
                 let y1 = locations[i].0 + (locations[i].0 - locations[j].0);
                 let x1 = locations[i].1 + (locations[i].1 - locations[j].1);
+
                 let y2 = locations[j].0 + (locations[j].0 - locations[i].0);
                 let x2 = locations[j].1 + (locations[j].1 - locations[i].1);
 
-                antinodes.insert((x1, y1));
-                antinodes.insert((x2, y2));
+                antinodes1.insert((x1, y1));
+                antinodes1.insert((x2, y2));
             }
         }
     }
 
-    antinodes = antinodes
+    antinodes1 = antinodes1
         .into_iter()
         .filter(|antinode| {
             antinode.0 >= 0
@@ -54,5 +76,16 @@ fn main() {
         })
         .collect();
 
-    println!("Part 1: {}", antinodes.len());
+    antinodes2 = antinodes2
+        .into_iter()
+        .filter(|antinode| {
+            antinode.0 >= 0
+                && antinode.0 < lines[0].len() as isize
+                && antinode.1 >= 0
+                && antinode.1 < lines.len() as isize
+        })
+        .collect();
+
+    println!("Part 1: {}", antinodes1.len());
+    println!("Part 2: {}", antinodes2.len());
 }
