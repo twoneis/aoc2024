@@ -33,7 +33,10 @@ fn main() {
         locations.sort();
         for i in 0..locations.len() {
             for j in i + 1..locations.len() {
-                let x1 = locations[i] - locations[i].abs_diff(locations[j]) as isize;
+                let y1 = locations[i].0 + (locations[i].0 - locations[j].0);
+                let x1 = locations[i].1 + (locations[i].1 - locations[j].1);
+                let y2 = locations[j].0 + (locations[j].0 - locations[i].0);
+                let x2 = locations[j].1 + (locations[j].1 - locations[i].1);
 
                 antinodes.insert((x1, y1));
                 antinodes.insert((x2, y2));
@@ -51,9 +54,5 @@ fn main() {
         })
         .collect();
 
-    println!("Len: {}", antinodes.len());
-
-    for antinode in antinodes {
-        println! {"{:?}", antinode}
-    }
+    println!("Part 1: {}", antinodes.len());
 }
