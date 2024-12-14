@@ -16,6 +16,18 @@ fn main() {
         .map(|s| s.chars().collect())
         .collect();
 
+    let res1 = part1(&lines);
+
+    let res2 = part2(&lines);
+
+    println!("Part 1: {res1}");
+}
+
+fn part2(lines: &Vec<Vec<char>>) -> usize {
+    0
+}
+
+fn part1(lines: &Vec<Vec<char>>) -> usize {
     let mut perimeters: HashMap<usize, usize> =
         HashMap::with_capacity(lines.len() * lines[0].len());
     let mut regions: DisjointSet = DisjointSet::with_len(lines.len() * lines[0].len());
@@ -52,7 +64,7 @@ fn main() {
         }
     }
 
-    let mut res1 = 0;
+    let mut res = 0;
 
     for set in regions.sets() {
         let area = set.len();
@@ -63,8 +75,8 @@ fn main() {
                 None => panic!("No perimeter for id"),
             }
         }
-        res1 += area * perimeter;
+        res += area * perimeter;
     }
 
-    println!("Part 1: {res1}");
+    res
 }
