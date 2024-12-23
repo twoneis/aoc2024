@@ -4,3 +4,4 @@ target/
 .direnv/
 
 input
+out.txt
