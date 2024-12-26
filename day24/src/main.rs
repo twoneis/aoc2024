@@ -229,18 +229,5 @@ fn main() {
             acc
         });
 
-    let z_values = assignments
-        .iter()
-        .filter(|(k, _)| {
-            let rex = Regex::new(r"z(?<bit>\d+)").expect("Regex error");
-            match rex.captures(k) {
-                Some(_) => true,
-                _ => false,
-            }
-        })
-        .collect::<Vec<(&String, &u8)>>();
-
-    dbg!(z_values);
-
     println!("Part 1: {z}");
 }
