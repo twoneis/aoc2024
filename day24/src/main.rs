@@ -211,7 +211,7 @@ fn main() {
         }
     }
 
-    let z = assignments
+    let z: usize = assignments
         .iter()
         .filter_map(|(k, &v)| {
             let rex = Regex::new(r"z(?<bit>\d+)").expect("Regex error");
@@ -224,10 +224,7 @@ fn main() {
                 _ => None,
             }
         })
-        .fold(0, |mut acc, x| {
-            acc += x;
-            acc
-        });
+        .sum();
 
     println!("Part 1: {z}");
 }
